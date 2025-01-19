@@ -12,6 +12,7 @@ ggg 0
 kjkkkk 0
 Daniel 0
 ff 0
+czarek 0
 far -80
 frotacy -90
 klocek -90
