@@ -780,17 +780,34 @@ private:
                 "  - Po wygranej gra przechodzi na trudniejszy poziom.\n"
 
                 "Sterowanie:\n"
-                "  - W/S/A/D - Ruch gracza\n"
-                "  - Spacja - Pauza\n"
-                "  - Escape - Powrot do menu\n"
-                "  - F1 - Otworz pomoc\n"
+                "  - W/A/S/D: ruch gracza\n"
+                "  - Spacja: pauza\n"
+                "  - Escape: powrot do menu\n"
+                "  - F1: otworz pomoc\n"
 
                 "Punktacja:\n"
                 " - Zebranie cukierka: +10 pkt\n"
                 " - Uderzenie w przeszkode: -30 pkt\n"
                 " - Zebranie monety: +50 pkt\n"
                 " - Zebranie przeszkody: +20 pkt");
-            
+
+            VertexArray przeszkoda(LineStrip, 6);
+
+            przeszkoda[0].position = Vector2f(320, 250);
+            przeszkoda[1].position = Vector2f(360, 240);
+            przeszkoda[2].position = Vector2f(380, 260);
+            przeszkoda[3].position = Vector2f(370, 290);
+            przeszkoda[4].position = Vector2f(330, 280);
+            przeszkoda[5].position = Vector2f(320, 250);
+
+            przeszkoda[0].color = Color::Green;
+            przeszkoda[1].color = Color::Green;
+            przeszkoda[2].color = Color::Green;
+            przeszkoda[3].color = Color::Green;
+            przeszkoda[4].color = Color::Green;
+            przeszkoda[5].color = Color::Green;
+
+            pomocOkno.draw(przeszkoda);
             pomocOkno.draw(tekstPomocy);
             pomocOkno.display();
         }
