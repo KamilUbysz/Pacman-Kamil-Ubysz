@@ -546,8 +546,7 @@ private:
 
         else if (wpisywanieImienia)
         {
-            instrukcja.setString("Podaj swoje imie: " + playerName + "_\n"
-                "Aby zobaczyc ranking najlepszych graczy wcisnij F2.");
+            instrukcja.setString("Podaj swoje imie: " + playerName + "_\n");
         }
         else 
         {
