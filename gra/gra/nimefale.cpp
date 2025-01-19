@@ -405,6 +405,7 @@ private:
         ss << "Zycia: " << zycia << "\n";
         ss << "Czas: " << max(0, maksymalnyCzas - czasGry) << " s\n";
         ss << "Poziom trudnosci: " << poziomTrudnosci << "\n";
+        ss << "Pomoc : F1\n";
 
 
         text.setString(ss.str());
@@ -733,6 +734,67 @@ private:
             rankingOkno.display();
         }
     }
+    void wyswietlPomocOkno()
+    {
+        RenderWindow pomocOkno(VideoMode(500, 400), "Pomoc - Zasady gry i sterowanie");
+
+        Font pomocFont;
+        if (!pomocFont.loadFromFile("ChamsBold.ttf"))
+        {
+            cerr << "Blad ladowania czcionki!" << endl;
+            return;
+        }
+       
+        while (pomocOkno.isOpen())
+        {
+            Event event;
+            while (pomocOkno.pollEvent(event))
+            {
+                if (event.type == Event::Closed) 
+{
+                    pomocOkno.close();
+                }
+            }
+
+            pomocOkno.clear(Color::Black);
+
+            Text naglowek("Witaj w grze PACMAN", pomocFont, 22);
+            naglowek.setFillColor(Color::White);
+            naglowek.setPosition(20, 20);
+            pomocOkno.draw(naglowek);
+
+            
+              
+               
+
+            Text tekstPomocy;
+            tekstPomocy.setFont(pomocFont);
+            tekstPomocy.setCharacterSize(20);
+            tekstPomocy.setFillColor(Color::White);
+            tekstPomocy.setPosition(20, 60);
+            tekstPomocy.setString("Zasady gry:\n"
+                "  - Zbieraj cukierki, aby pojawila sie moneta.\n"
+                "  - Zbierz monete, by moc niszczyc przeszkody.\n"
+                "  - Unikaj przeszkod, tracisz za nie zycia.\n"
+                "  - Masz 3 zycia i limit czasu na poziom.\n"
+                "  - Po wygranej gra przechodzi na trudniejszy poziom.\n"
+
+                "Sterowanie:\n"
+                "  - W/S/A/D - Ruch gracza\n"
+                "  - Spacja - Pauza\n"
+                "  - Escape - Powrot do menu\n"
+                "  - F1 - Otworz pomoc\n"
+
+                "Punktacja:\n"
+                " - Zebranie cukierka: +10 pkt\n"
+                " - Uderzenie w przeszkode: -30 pkt\n"
+                " - Zebranie monety: +50 pkt\n"
+                " - Zebranie przeszkody: +20 pkt");
+            
+            pomocOkno.draw(tekstPomocy);
+            pomocOkno.display();
+        }
+    }
 
 
 
@@ -811,10 +873,9 @@ public:
                                 else if (event.text.unicode < 128 && playerName.size() < 10)
                                 {
                                     playerName += static_cast<char>(event.text.unicode);
-                                }
+                                } 
                             }
                         }
-
                     if (event.type == Event::KeyPressed)
                     {
                         if (event.key.code == Keyboard::F2) 
@@ -849,10 +910,9 @@ public:
                                     kontynuujGre = false;
                                     wMenu = false;
                                 }
-                                else if (menuWybor == 2) {
-                                    
-                                    potwierdzWyjscie = true;
-                                   
+                                else if (menuWybor == 2) 
+                                {
+                                    potwierdzWyjscie = true;  
                                 }
                             }
                         }
@@ -864,11 +924,10 @@ public:
                         }
                     }
                 }
-
-
                 else 
                 {
-                    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space) {
+                    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space) 
+                    {
                         graZapauzowana = !graZapauzowana; 
 
                         if (graZapauzowana)
@@ -880,7 +939,11 @@ public:
                             zegarCzasu.restart();
                         }
                     }
-
+                    if (event.type == Event::KeyPressed && event.key.code == Keyboard::F1)
+                    {
+                        wyswietlPomocOkno();
+                        graZapauzowana = true;
+                    }
                     
 
                     if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
