@@ -21,7 +21,6 @@ int MAX_OBSTACLES;
 float OBSTACLE_SPAWN_INTERVAL;
 float OBSTACLE_SPEED;
 
-
 class Punkt
 {
 public:
@@ -556,7 +555,7 @@ private:
             {
                 opcjeMenu += (menuWybor == 0 ? "-> Kontynuuj\n" : "   Kontynuuj\n");
                 opcjeMenu += (menuWybor == 1 ? "-> Nowa gra\n" : "   Nowa gra\n");
-                opcjeMenu += (menuWybor == 2 ? "-> Cofnij do wyboru imienia\n" : "   Cofnij do wyboru imienia\n");
+                opcjeMenu += (menuWybor == 2 ? "-> Cofnij do menu startowego\n" : "   Cofnij do menu startowego\n");
             }
             else
             {
@@ -777,43 +776,44 @@ public:
                         {
                             if (event.key.code == Keyboard::Up)
                             {
-                                potwierdzenieWybor = 0;
+                                potwierdzenieWybor = (potwierdzenieWybor > 0) ? potwierdzenieWybor - 1 : 1;
                             }
                             else if (event.key.code == Keyboard::Down)
                             {
-                                potwierdzenieWybor = 1;
+                                potwierdzenieWybor = (potwierdzenieWybor < 1) ? potwierdzenieWybor + 1 : 0;
                             }
                             else if (event.key.code == Keyboard::Enter)
                             {
                                 if (potwierdzenieWybor == 0)
                                 {
                                     resetujGre();
-                                    wpisywanieImienia = true;
                                     potwierdzWyjscie = false;
-                                   
+                                    wpisywanieImienia = true;
                                 }
                                 else if (potwierdzenieWybor == 1)
                                 {
-                                    
                                     potwierdzWyjscie = false;
-
+                                    wMenu = true;
                                 }
                             }
                         }
                     }
 
-                    if (event.type == Event::TextEntered && wpisywanieImienia) 
-                    {
-                        if (event.text.unicode == '\b' && !playerName.empty())
+                    else if (wpisywanieImienia) 
+                        if (event.type == Event::TextEntered)
                         {
-                            playerName.pop_back(); 
-                        }
+                            {
+                                if (event.text.unicode == '\b' && !playerName.empty())
+                                {
+                                    playerName.pop_back();
+                                }
 
-                        else if (event.text.unicode < 128 && playerName.size() < 10)
-                        {
-                            playerName += static_cast<char>(event.text.unicode);
+                                else if (event.text.unicode < 128 && playerName.size() < 10)
+                                {
+                                    playerName += static_cast<char>(event.text.unicode);
+                                }
+                            }
                         }
-                    }
 
                     if (event.type == Event::KeyPressed)
                     {
