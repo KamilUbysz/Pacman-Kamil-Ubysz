@@ -82,6 +82,11 @@ public:
                 ustawCel(nowyX, nowyY);
             }
         }
+        if (zegarBonusu.getElapsedTime().asSeconds() > 10)
+        {
+            OBSTACLE_SPEED *= 2.0;
+        }
+
     }
 };
 
@@ -188,14 +193,46 @@ public:
     }
 };
 
+class Bonus
+{
+public:
+    Punkt pozycja;
+    bool aktywny;
+    int typ;
+    Clock zegarBonusu;
+
+    Bonus() : pozycja(-1, -1), aktywny(false), typ(0) {}
+
+    void generuj(vector<vector<int>>& plansza) 
+    {
+        do
+        {
+            pozycja.x = rand() % WIDTH;
+            pozycja.y = rand() % HEIGHT;
+        } 
+        while (plansza[pozycja.y][pozycja.x] != 0);
+
+        aktywny = true;
+        typ = rand() % 3; 
+        zegarBonusu.restart();
+    }
+
+    void zbierz()
+    {
+        aktywny = false;
+        pozycja = Punkt(-1, -1);
+    }
+};
+
+
 class Gra
 {
 private:
     RenderWindow okno;
     vector<vector<int>> plansza;
     Gracz gracz;
-    Texture teksturaSciany, teksturaGracza, teksturaCukierka, teksturaPrzeszkody, teksturaMonety;
-    Sprite sciana, postac, cukierekSprite, przeszkodaSprite, monetaSprite;
+    Texture teksturaSciany, teksturaGracza, teksturaCukierka, teksturaPrzeszkody, teksturaMonety, teksturaBonusZycie, teksturaBonusZwolnienie, teksturaBonusCzas;
+    Sprite sciana, postac, cukierekSprite, przeszkodaSprite, monetaSprite, bonusSprite;
     vector<Obstacle> przeszkody;
     vector<Candy> cukierki;
     Coin moneta;
@@ -221,6 +258,10 @@ private:
     float czasPauzy = 0.0f; 
     bool potwierdzWyjscie = false; 
     int potwierdzenieWybor;
+    Bonus bonus;
+    Text komunikatBonus;
+    Clock zegarKomunikatu;
+    bool pokazKomunikatBonus = false;
 
     
 
@@ -257,7 +298,11 @@ private:
             !teksturaCukierka.loadFromFile("candy.png") ||
             !teksturaPrzeszkody.loadFromFile("obstacle.png") ||
             !teksturaMonety.loadFromFile("coin.png") ||
-            !font.loadFromFile("ChamsBold.ttf")) {
+            !teksturaBonusZycie.loadFromFile("bonus_zycie.png") ||
+            !teksturaBonusZwolnienie.loadFromFile("bonus_zwolnienie.png") ||
+            !teksturaBonusCzas.loadFromFile("bonus_czas.png") ||
+            !font.loadFromFile("ChamsBold.ttf")) 
+        {
             cerr << "Blad ladowania zasobow!" << endl;
             exit(EXIT_FAILURE);
         }
@@ -386,6 +431,36 @@ private:
                 }
             }
         }
+        if (punkty % 50 == 0 && punkty > 0 && !bonus.aktywny) 
+        {
+            bonus.generuj(plansza);
+        }
+
+        if (bonus.aktywny && gracz.pozycja.x == bonus.pozycja.x && gracz.pozycja.y == bonus.pozycja.y)
+        {
+            bonus.zbierz();
+
+            switch (bonus.typ)
+            {
+            case 0: 
+                zycia++;
+                komunikatBonus.setString("Bonus: Dodatkowe zycie!");
+                break;
+            case 1: 
+                OBSTACLE_SPEED *= 0.5;
+                komunikatBonus.setString("Bonus: Zwolnienie przeszkod!");
+                zegarBonusu.restart();
+                break;
+            case 2: 
+                czasPauzy -= 15;
+                komunikatBonus.setString("Bonus: +15 sekund!");
+                break;
+            }
+
+            pokazKomunikatBonus = true;
+            zegarKomunikatu.restart();
+        }
+
     }
 
 
@@ -505,9 +580,30 @@ private:
             }
             tekst.setPosition(WIDTH * TILE_SIZE / 4, HEIGHT * TILE_SIZE / 2);
             okno.draw(tekst);
-
-
         }
+        if (bonus.aktywny)
+        {
+            switch (bonus.typ)
+            {
+            case 0: bonusSprite.setTexture(teksturaBonusZycie); break;
+            case 1: bonusSprite.setTexture(teksturaBonusZwolnienie); break;
+            case 2: bonusSprite.setTexture(teksturaBonusCzas); break;
+            }
+            bonusSprite.setPosition(bonus.pozycja.x * TILE_SIZE, bonus.pozycja.y * TILE_SIZE);
+            okno.draw(bonusSprite);
+        }
+
+
+        
+        if (pokazKomunikatBonus && zegarKomunikatu.getElapsedTime().asSeconds() < 1)
+        {
+            okno.draw(komunikatBonus);
+        }
+        else
+        {
+            pokazKomunikatBonus = false;
+        }
+
         okno.display();
     }
 
@@ -829,6 +925,11 @@ public:
             cukierek.aktywny = false;
             cukierki.push_back(cukierek);
         }
+        komunikatBonus.setFont(font);
+        komunikatBonus.setCharacterSize(24);
+        komunikatBonus.setFillColor(Color::Yellow);
+        komunikatBonus.setPosition(WIDTH * TILE_SIZE / 4, HEIGHT * TILE_SIZE / 2);
+
 
     }
 
