@@ -162,7 +162,8 @@ public:
         aktywny = true;
     }
 
-    void zbierz() {
+    void zbierz()
+    {
         aktywny = false;
         pozycja = Punkt(-1, -1);
     }
@@ -222,6 +223,7 @@ public:
         aktywny = false;
         pozycja = Punkt(-1, -1);
     }
+   
 };
 
 
@@ -262,10 +264,6 @@ private:
     Text komunikatBonus;
     Clock zegarKomunikatu;
     bool pokazKomunikatBonus = false;
-
-    
-
-
 
 
 
@@ -362,7 +360,8 @@ private:
 
 
 
-    void sprawdzKolizje() {
+    void sprawdzKolizje() 
+    {
        
         bool wszystkieCukierkiZebrane = true;
 
@@ -382,7 +381,12 @@ private:
             moneta.aktywny = true;
         }
 
-
+        if (punkty % 50 == 0 && punkty > 0 && !bonus.aktywny)
+        {
+            bonus.generuj(plansza);
+            bonus.aktywny = true;
+            cout << "Bonus aktywny " << endl;
+        }
 
         
         for (auto& cukierek : cukierki) 
@@ -431,10 +435,7 @@ private:
                 }
             }
         }
-        if (punkty % 50 == 0 && punkty > 0 && !bonus.aktywny) 
-        {
-            bonus.generuj(plansza);
-        }
+       
 
         if (bonus.aktywny && gracz.pozycja.x == bonus.pozycja.x && gracz.pozycja.y == bonus.pozycja.y)
         {
@@ -456,11 +457,10 @@ private:
                 komunikatBonus.setString("Bonus: +15 sekund!");
                 break;
             }
-
+            punkty += 10;
             pokazKomunikatBonus = true;
             zegarKomunikatu.restart();
         }
-
     }
 
 
@@ -1147,7 +1147,6 @@ public:
 
                 spawnujPrzeszkody();
                 sprawdzKolizje();
-
                 rysuj();
                 ustawParametryTrudnosci();
             }
